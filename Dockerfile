@@ -8,8 +8,6 @@ LABEL description="This is a Microsoft EVA development environment image based o
 # Disable Prompt During Packages Installation
 ARG DEBIAN_FRONTEND=noninteractive
 
-
-
 RUN apt update \
     && mkdir development \
     && cd development \
@@ -44,4 +42,4 @@ RUN git clone https://github.com/microsoft/EVA.git \
 RUN pip3 install adhoccomputing \
     && pip3 install networkx
 
-COPY 519ProjectTemplate /development/519ProjectTemplate
+COPY 519Project /development/519Project
