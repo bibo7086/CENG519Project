@@ -160,7 +160,7 @@ def matrixMultiplication(graph1, graph2, n):
 # Given an encrypted query consisting of (u, v) and
 # the encrypted transitive closure of a tree(graph)
 # Returns whether or not the two nodes are on the same path 
-def checkSamePath(transitiveclosure, query): 
+def samePathChecker(transitiveclosure, query): 
 
     x = py_to_eva(transitiveclosure)
     x = transitiveclosure*query
@@ -277,7 +277,7 @@ def simulate(n):
     with graphanaltic:
         graph = Input('Graph')
         query = Input('Query')
-        result = checkSamePath(graph, query)
+        result = samePathChecker(graph, query)
         Output('Result', result)
 
     prog = graphanaltic
