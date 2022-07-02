@@ -55,7 +55,6 @@ def printGraph(graph,n):
             print("{:.2f}".format(round(graph[row*n+column])), end = '\t')
         print() 
 
-
 # Eva requires special input, this function prepares the input
 # Eva will then encrypt them
 def prepareInput(n, m):
@@ -158,9 +157,9 @@ def matrixMultiplication(graph1, graph2, n):
     return ctAB
 
 # Given an encrypted query consisting of (u, v) and
-# the encrypted transitive closure of a tree(graph)
+# the encrypted transitive closure of a tree (graph)
 # Returns whether or not the two nodes are on the same path 
-def samePathChecker(transitiveclosure, query): 
+def checkSamePath(transitiveclosure, query): 
 
     x = py_to_eva(transitiveclosure)
     x = transitiveclosure*query
@@ -172,9 +171,9 @@ def samePathChecker(transitiveclosure, query):
 
     return x
 
-# To avoid cluttering the simulat function moved the analytics here
+# To avoid cluttering the simulat function moved the statistics here
 # Would be better to have it in a seperate file
-def analytics(prog, inputs): 
+def statistics(prog, inputs): 
     prog.set_output_ranges(30)
     prog.set_input_scales(30)
 
@@ -243,7 +242,7 @@ def simulate(n):
         if (i == 0): 
             inputs = prepareInput(n, m)
         else: 
-            inputs = prepareInput2(outputtracker, n)
+            inputs = prepareInput2(outputTracker, n)
 
         with graphanaltic:
             graph1 = Input('Graph')
@@ -252,9 +251,8 @@ def simulate(n):
             Output('ReturnedValue', reval)
 
         prog = graphanaltic
-    
 
-        outputs, compiletime, keygenerationtime, encryptiontime, executiontime, decryptiontime, referenceexecutiontime, mse =  analytics(prog, inputs)
+        outputs, compiletime, keygenerationtime, encryptiontime, executiontime, decryptiontime, referenceexecutiontime, mse =  statistics(prog, inputs)
     
         totalCompiletime += compiletime
         totalKeygenerationtime += keygenerationtime
@@ -266,25 +264,22 @@ def simulate(n):
         result = outputs["ReturnedValue"]
         result = [round(x) for x in result]
         result = [1 if x >  0 else 0 for x in result]
-        outputtracker = result
+        outputTracker = result
         # print(compiletime, keygenerationtime, encryptiontime, executiontime, decryptiontime, referenceexecutiontime)
 
-
-
-    # Step 2: Determien whether two nodes are on the same path 
-    inputs = queryInput(outputtracker, n)
+    # Step 2: Determine whether two nodes are on the same path 
+    inputs = queryInput(outputTracker, n)
     graphanaltic = EvaProgramDriver("Determine if two nodes are on the same path", vec_size=m)
     with graphanaltic:
         graph = Input('Graph')
         query = Input('Query')
-        result = samePathChecker(graph, query)
+        result = checkSamePath(graph, query)
         Output('Result', result)
 
     prog = graphanaltic
-    prog.set_output_ranges(30)
-    prog.set_input_scales(30)
     
     output, compiletime, keygenerationtime, encryptiontime, executiontime, decryptiontime, referenceexecutiontime, mse =  analytics(prog, inputs)
+   
     totalCompiletime += compiletime
     totalKeygenerationtime += keygenerationtime
     totalEncryptiontime += encryptiontime
@@ -297,7 +292,7 @@ def simulate(n):
     if viewResults: 
         print(nx.forest_str(generatedTree))
         print("The transitive closure of the above tree is ")
-        printGraph(outputtracker, n)
+        printGraph(outputTracker, n)
         if round(output['Result'][0]) >= 1: 
             print(f"Node {queryNodes[0]} and {queryNodes[1]} lie on the same path ")
         else: 
